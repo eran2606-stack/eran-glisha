@@ -32,7 +32,7 @@
   --sea:#4fb7bd; --sea-soft:#173a3e; --buoy:#ff8a5e; --line:#21393c; --ok:#4cc58e; color-scheme:dark}
 html,body{height:100%}
 /* Everything is sized in rem, and rem grows with the screen width, so the app fills the phone */
-html{font-size:clamp(18px,4.6vw,30px)}
+html{font-size:clamp(16px,4vw,26px)}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:1rem;line-height:1.45}
 .app{max-width:30rem;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:1rem 0}
@@ -160,8 +160,6 @@ const $ = id => document.getElementById(id);
 let chosen = new Set(), checked = new Set();
 const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
                set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const saved = store.get("eg-last");
-if (saved && Array.isArray(saved)) saved.forEach(s=>SPORTS[s]&&chosen.add(s));
 
 function renderSports(){
   $("sports").innerHTML = "";
@@ -219,7 +217,7 @@ function update(){
 function show(id){for(const s of ["s-choose","s-load","s-done"]) $(s).hidden = s!==id; window.scrollTo(0,0);
   $("sub").textContent = id==="s-choose"?"מה בתוכנית היום?":id==="s-load"?"סמן כל פריט שנכנס לרכב":"הכל ברכב";}
 
-$("go").onclick=()=>{checked.clear();store.set("eg-last",[...chosen]);renderLoad();show("s-load")};
+$("go").onclick=()=>{checked.clear();renderLoad();show("s-load")};
 $("back").onclick=()=>show("s-choose");
 $("submit").onclick=()=>{
   const missing=allNames().filter(x=>!checked.has(x));
@@ -233,7 +231,7 @@ $("submit").onclick=()=>{
   $("doneSummary").textContent=`${all.length-missing.length} מתוך ${all.length} פריטים ברכב · ${[...chosen].map(s=>SPORTS[s].name).join(" + ")}`;
   show("s-done");
 };
-$("again").onclick=()=>{checked.clear();renderSports();show("s-choose")};
+$("again").onclick=()=>{checked.clear();chosen.clear();renderSports();show("s-choose")};
 renderSports();
 </script>
 

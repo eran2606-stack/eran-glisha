@@ -1,5 +1,5 @@
 // ערן גלישה: שומר את האפליקציה בטלפון כדי שתעבוד גם בלי אינטרנט
-const CACHE = "eran-glisha-v1";
+const CACHE = "eran-glisha-v2";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
