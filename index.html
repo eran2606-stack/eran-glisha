@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f6a73">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ערן גלישה">
+<style>[hidden]{display:none!important}body{margin:0}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+<title>ערן גלישה</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Secular+One&family=Assistant:wght@400;600;700&display=swap">
+<style>
+/* Layout: one-column phone app, three screens (choose → load → done), sticky action bar at the bottom */
+:root{
+  --bg:#eef4f3; --surface:#ffffff; --fg:#10272b; --muted:#5b7276;
+  --sea:#0f6a73; --sea-soft:#d6ebea; --buoy:#e8643c; --line:#d3e1df; --ok:#1f8a5b;
+  --display:"Secular One","Assistant",system-ui,sans-serif;
+  --body:"Assistant",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0b1a1d; --surface:#122629; --fg:#e4f0ee; --muted:#8fa8a9;
+  --sea:#4fb7bd; --sea-soft:#173a3e; --buoy:#ff8a5e; --line:#21393c; --ok:#4cc58e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1a1d; --surface:#122629; --fg:#e4f0ee; --muted:#8fa8a9;
+  --sea:#4fb7bd; --sea-soft:#173a3e; --buoy:#ff8a5e; --line:#21393c; --ok:#4cc58e; color-scheme:dark}
+html,body{height:100%}
+/* Everything is sized in rem, and rem grows with the screen width, so the app fills the phone */
+html{font-size:clamp(18px,4.6vw,30px)}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:1rem;line-height:1.45}
+.app{max-width:30rem;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:1rem 0}
+header h1{font-family:var(--display);font-weight:400;font-size:2.4rem;line-height:1.05;margin:0;color:var(--sea);letter-spacing:-.01em}
+header p{margin:.2rem 0 0;color:var(--muted);font-size:1.1rem}
+.wave{display:block;width:100%;height:.8rem;margin-top:.5rem;color:var(--sea);opacity:.4}
+.screen{flex:1;display:flex;flex-direction:column;gap:1rem;padding-block:1rem 0}
+h2{font-family:var(--display);font-weight:400;font-size:1.35rem;margin:0}
+.sports{display:flex;flex-direction:column;gap:.75rem}
+.sport{appearance:none;border:3px solid var(--line);background:var(--surface);color:var(--fg);
+  border-radius:1.1rem;padding:1rem 1.2rem;text-align:right;font:inherit;cursor:pointer;
+  display:flex;align-items:center;gap:1rem;min-height:5.2rem;transition:border-color .15s,background .15s}
+.sport b{font-size:1.5rem;font-weight:700;flex:1}
+.sport small{display:none}
+.sport::after{content:"";flex:none;width:1.9rem;height:1.9rem;border-radius:50%;border:3px solid var(--line);box-sizing:border-box}
+.sport[aria-pressed="true"]{border-color:var(--sea);background:var(--sea-soft)}
+.sport[aria-pressed="true"]::after{border-color:var(--sea);background:var(--sea) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/70% no-repeat}
+.sport:focus-visible,.btn:focus-visible,.item input:focus-visible{outline:3px solid var(--buoy);outline-offset:2px}
+.note{font-size:.95rem;color:var(--muted);margin:0}
+.bar{position:sticky;bottom:0;margin-top:auto;background:linear-gradient(to top,var(--bg) 75%,transparent);
+  padding-block:1rem calc(1rem + env(safe-area-inset-bottom,0px));display:flex;gap:.6rem}
+.btn{flex:1;appearance:none;border:0;border-radius:1.1rem;padding:1.05rem 1.2rem;font:inherit;font-weight:700;font-size:1.3rem;cursor:pointer;background:var(--sea);color:var(--surface);min-height:4rem}
+.btn:disabled{opacity:.35;cursor:default}
+.btn.ghost{flex:0 0 auto;background:var(--surface);color:var(--sea);border:3px solid var(--line)}
+.btn.warn{background:var(--buoy)}
+.progress{display:flex;align-items:center;gap:.8rem}
+.track{flex:1;height:.75rem;border-radius:99px;background:var(--line);overflow:hidden}
+.fill{height:100%;width:0;background:var(--sea);border-radius:99px;transition:width .25s}
+.count{font-variant-numeric:tabular-nums;font-weight:700;font-size:1.4rem;color:var(--sea);min-width:3.2em;text-align:left}
+.chips{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{font-size:1rem;padding:.2rem .8rem;border-radius:99px;background:var(--sea-soft);color:var(--sea);font-weight:700}
+.group h3{font-size:1rem;letter-spacing:.03em;color:var(--muted);margin:0 0 .4rem;font-weight:700}
+.list{list-style:none;margin:0;padding:0;background:var(--surface);border:2px solid var(--line);border-radius:1.1rem;overflow:hidden}
+.item{display:flex;align-items:center;gap:1rem;padding:.9rem 1.1rem;min-height:4rem;border-top:2px solid var(--line);cursor:pointer;font-size:1.3rem;font-weight:600}
+.item:first-child{border-top:0}
+.item input{width:2rem;height:2rem;accent-color:var(--sea);flex:none;margin:0}
+.item span{flex:1;min-width:0}
+.item.done{background:var(--sea-soft)}
+.item.done span{color:var(--muted);text-decoration:line-through}
+.alert{background:var(--surface);border:3px solid var(--buoy);border-radius:1.1rem;padding:.9rem 1.1rem;font-size:1.15rem}
+.alert p{margin:0 0 .3rem;font-weight:700}
+.alert ul{margin:0;padding-inline-start:1.2rem;color:var(--muted)}
+.done-screen{align-items:center;justify-content:center;text-align:center}
+.done-screen .big{font-family:var(--display);font-size:3.6rem;line-height:1.1;color:var(--sea);margin:0}
+.done-screen p{color:var(--muted);margin:0;font-size:1.15rem}
+.sun{width:6rem;height:6rem;border-radius:50%;background:var(--buoy);box-shadow:0 0 0 .9rem color-mix(in srgb,var(--buoy) 18%,transparent)}
+.sea-anim{width:100%;max-width:100%;height:4rem;color:var(--sea)}
+.sea-anim path{animation:roll 3.2s ease-in-out infinite}
+@keyframes roll{50%{transform:translateX(-24px)}}
+@media (prefers-reduced-motion:reduce){.sea-anim path{animation:none}.fill{transition:none}}
+</style>
+
+<div class="app" dir="rtl" lang="he">
+  <header>
+    <h1>ערן גלישה</h1>
+    <p id="sub">מה בתוכנית היום?</p>
+    <svg class="wave" viewBox="0 0 200 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 Q12.5 0 25 7 T50 7 T75 7 T100 7 T125 7 T150 7 T175 7 T200 7" fill="none" stroke="currentColor" stroke-width="2.5"/></svg>
+  </header>
+
+  <!-- Screen 1: choose -->
+  <section class="screen" id="s-choose">
+    <h2>בחר פעילות אחת או יותר</h2>
+    <div class="sports" id="sports"></div>
+    <p class="note">פריט שמשותף לכמה פעילויות יופיע ברשימה פעם אחת.</p>
+    <div class="bar"><button class="btn" id="go" disabled>הצג רשימת ציוד</button></div>
+  </section>
+
+  <!-- Screen 2: load -->
+  <section class="screen" id="s-load" hidden>
+    <div class="chips" id="chosen"></div>
+    <div class="progress"><div class="track"><div class="fill" id="fill"></div></div><span class="count" id="count">0/0</span></div>
+    <div id="groups" style="display:flex;flex-direction:column;gap:1.1rem"></div>
+    <div class="alert" id="missing" hidden>
+      <p>עוד לא סימנת:</p>
+      <ul id="missingList"></ul>
+    </div>
+    <div class="bar">
+      <button class="btn ghost" id="back">חזרה</button>
+      <button class="btn" id="submit">סיימתי להעמיס</button>
+    </div>
+  </section>
+
+  <!-- Screen 3: done -->
+  <section class="screen done-screen" id="s-done" hidden>
+    <div class="sun" aria-hidden="true"></div>
+    <p class="big">תהנה בים!</p>
+    <p id="doneSummary"></p>
+    <svg class="sea-anim" viewBox="0 0 400 60" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-30 30 Q0 10 30 30 T90 30 T150 30 T210 30 T270 30 T330 30 T390 30 T450 30" fill="none" stroke="currentColor" stroke-width="4"/>
+      <path d="M-30 46 Q0 28 30 46 T90 46 T150 46 T210 46 T270 46 T330 46 T390 46 T450 46" fill="none" stroke="currentColor" stroke-width="3" opacity=".45" style="animation-delay:-1.2s"/>
+    </svg>
+    <div class="bar" style="width:100%"><button class="btn" id="again">יציאה חדשה</button></div>
+  </section>
+</div>
+
+<script>
+// ===== נתונים: כאן מעדכנים את רשימות הציוד =====
+const SPORTS = {
+  wing:   {name:"ווינג",        hint:""},
+  efoil:  {name:"פרון ממונע FD", hint:""},
+  para:   {name:"פארא",          hint:""},
+  surf:   {name:"גלישת גלים",    hint:""}
+};
+const ALWAYS = ["מים","מגבת","חליפת גלישה","אפוד","קסדה"];
+const ITEMS = [
+  ["גלשן Wing-S",["wing"]],
+  ["גלשן FD",["efoil"]],
+  ["ווינג",["wing"]],
+  ["תורן",["wing","para"]],
+  ["מנור",["wing"]],
+  ["פויל 820 Sushi",["wing","efoil","para"]],
+  ["פויל 1050SK",["wing","efoil","para"]],
+  ["גלשן גלים",["surf"]],
+  ["מזוודה",["efoil"]],
+  ["סוללות",["efoil"]],
+  ["שלט",["efoil"]],
+  ["גלשן Freesurf",["para"]],
+  ["טרפז",["para"]],
+  ["פארא 5.0",["para"]],
+  ["פארא 4.0",["para"]]
+];
+// =================================================
+
+const $ = id => document.getElementById(id);
+let chosen = new Set(), checked = new Set();
+const store = {get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},
+               set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const saved = store.get("eg-last");
+if (saved && Array.isArray(saved)) saved.forEach(s=>SPORTS[s]&&chosen.add(s));
+
+function renderSports(){
+  $("sports").innerHTML = "";
+  for (const [id,s] of Object.entries(SPORTS)){
+    const b = document.createElement("button");
+    b.className="sport"; b.id="sp-"+id; b.setAttribute("aria-pressed",chosen.has(id));
+    b.innerHTML = `<b>${s.name}</b>` + (s.hint?`<small>${s.hint}</small>`:"");
+    b.onclick=()=>{chosen.has(id)?chosen.delete(id):chosen.add(id);b.setAttribute("aria-pressed",chosen.has(id));$("go").disabled=!chosen.size};
+    $("sports").appendChild(b);
+  }
+  $("go").disabled = !chosen.size;
+}
+
+function buildList(){
+  const sel=[...chosen];
+  const relevant = ITEMS.filter(([,sp])=>sp.some(s=>chosen.has(s)));
+  const shared = relevant.filter(([,sp])=>sp.filter(s=>chosen.has(s)).length>1).map(([n])=>n);
+  const groups = [["תמיד",ALWAYS]];
+  if (sel.length>1 && shared.length) groups.push(["משותף לכמה ענפים",shared]);
+  for (const s of sel){
+    const own = relevant.filter(([n,sp])=>sp.includes(s) && (sel.length===1 || !shared.includes(n))).map(([n])=>n);
+    if (own.length) groups.push([SPORTS[s].name,own]);
+  }
+  return groups;
+}
+
+function renderLoad(){
+  $("chosen").innerHTML = [...chosen].map(s=>`<span class="chip">${SPORTS[s].name}</span>`).join("");
+  $("groups").innerHTML = "";
+  let i=0;
+  for (const [title,items] of buildList()){
+    const g=document.createElement("div"); g.className="group";
+    g.innerHTML=`<h3>${title}</h3><ul class="list"></ul>`;
+    const ul=g.querySelector("ul");
+    for (const name of items){
+      const li=document.createElement("li"); li.className="item"; const id="it-"+(i++);
+      li.innerHTML=`<input type="checkbox" id="${id}"><span></span>`;
+      li.querySelector("span").textContent=name;
+      const cb=li.querySelector("input"); cb.checked=checked.has(name); li.classList.toggle("done",cb.checked);
+      cb.onchange=()=>{cb.checked?checked.add(name):checked.delete(name);li.classList.toggle("done",cb.checked);update()};
+      li.onclick=e=>{if(e.target!==cb){cb.checked=!cb.checked;cb.onchange()}};
+      ul.appendChild(li);
+    }
+    $("groups").appendChild(g);
+  }
+  update();
+}
+function allNames(){return buildList().flatMap(([,it])=>it)}
+function update(){
+  const all=allNames(), n=all.filter(x=>checked.has(x)).length;
+  $("count").textContent=`${n}/${all.length}`;
+  $("fill").style.width=(all.length?n/all.length*100:0)+"%";
+  $("missing").hidden=true; $("submit").textContent="סיימתי להעמיס"; $("submit").classList.remove("warn");
+}
+function show(id){for(const s of ["s-choose","s-load","s-done"]) $(s).hidden = s!==id; window.scrollTo(0,0);
+  $("sub").textContent = id==="s-choose"?"מה בתוכנית היום?":id==="s-load"?"סמן כל פריט שנכנס לרכב":"הכל ברכב";}
+
+$("go").onclick=()=>{checked.clear();store.set("eg-last",[...chosen]);renderLoad();show("s-load")};
+$("back").onclick=()=>show("s-choose");
+$("submit").onclick=()=>{
+  const missing=allNames().filter(x=>!checked.has(x));
+  if (missing.length && $("missing").hidden){
+    $("missingList").innerHTML=missing.map(m=>`<li></li>`).join("");
+    [...$("missingList").children].forEach((li,i)=>li.textContent=missing[i]);
+    $("missing").hidden=false; $("submit").textContent="לצאת בכל זאת"; $("submit").classList.add("warn");
+    $("missing").scrollIntoView({behavior:"smooth",block:"center"}); return;
+  }
+  const all=allNames();
+  $("doneSummary").textContent=`${all.length-missing.length} מתוך ${all.length} פריטים ברכב · ${[...chosen].map(s=>SPORTS[s].name).join(" + ")}`;
+  show("s-done");
+};
+$("again").onclick=()=>{checked.clear();renderSports();show("s-choose")};
+renderSports();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+}
+</script>
+</body>
+</html>
